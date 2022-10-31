@@ -1,11 +1,12 @@
 package br.com.alura.technews.ui.viewmodel
 
-import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import br.com.alura.technews.model.Noticia
 import br.com.alura.technews.repository.NoticiaRepository
 
-class ListaNoticiasViewModel (private val repository: NoticiaRepository) : ViewModel() {
+class ListaNoticiasViewModel(private val repository: NoticiaRepository) : ViewModel() {
 
 //    init {
 //        Log.i("viewmodel", "criando viewModel ")
@@ -16,8 +17,12 @@ class ListaNoticiasViewModel (private val repository: NoticiaRepository) : ViewM
 //        Log.i("viewmodel", "destruindo viewModel")
 //    }
 
-    fun buscaTodos(quandoSucesso: (noticiasNovas: List<Noticia>) -> Unit, quandoFalha: (erro: String?) -> Unit) {
-        repository.buscaTodos(quandoSucesso, quandoFalha)
+    fun buscaTodos(): LiveData<List<Noticia>> {
+        val liveData = MutableLiveData<List<Noticia>>()
+        repository.buscaTodos(quandoSucesso = { noticiasNovas ->
+            liveData.value = noticiasNovas
+        }, quandoFalha = {})
+        return liveData
     }
 
 }
